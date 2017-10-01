@@ -1,5 +1,7 @@
 ﻿using MauticApiClient.Net;
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ConsoleAppExample
 {
@@ -7,27 +9,31 @@ namespace ConsoleAppExample
     {
         static void Main(string[] args)
         {
-            var username = "";
-            var password = "";
-            var url = "";
+    
+            var username = "mautic_userid";
+            var password = "mautic_password";
+            var url = "https://XXXXXX/api/";
             var httpProvider = new HttpClientProvider(url, username, password);
-
-            var categoryService = new CategoryService(httpProvider);
-            var categories = categoryService.Get().Result;
-            foreach (var category in categories.Data)
-                Console.WriteLine("Category {0}# {1}", category.Id, category.Title);
-
-
-            var contactService = new ContactService(httpProvider);
-            var contacts = contactService.Get().Result;
-            foreach (var contact in contacts.Data)
-                Console.WriteLine(contact.Id);
-
-            var emailService = new EmailService(httpProvider);
-            var emails = emailService.Get().Result;
-            foreach (var email in emails.Data)
-                Console.WriteLine(email.Name);
-
+            //Teste Mautic Api Services 
+            try {
+                ////Perform Category Object Handle - Examples
+                //var varCategoryExample = new clsCategoryExample();
+                //varCategoryExample.funcExecute(httpProvider);
+                //Perform Contact Object Handle - Examples
+                var varContactExample = new clsContactExample();
+                varContactExample.funcExecute(httpProvider);
+            } catch (AggregateException varExceptionList) {
+                foreach(dynamic varException in varExceptionList.InnerExceptions){
+                    Console.WriteLine("Error {0}", varException.Message);
+                    if (varException.GetType() == typeof(MauticApiException)){
+                        var varMauticApiException = (MauticApiException)varException;
+                        foreach (var varErrorItem in varMauticApiException.GetErrors()) { 
+                            Console.WriteLine("Error {0} : {1} : {2}", varErrorItem.code, varErrorItem.type, varErrorItem.message);
+                        }
+                    }
+                }
+            }
+            //Wait the next action
             Console.Read();
         }
     }

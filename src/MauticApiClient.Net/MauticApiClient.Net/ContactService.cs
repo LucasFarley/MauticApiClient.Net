@@ -1,75 +1,121 @@
-﻿using MauticApiClient.Net.Model;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Net;
 using System.Net.Http;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using MauticApiClient.Net.Model;
+using Newtonsoft.Json.Linq;
 
 namespace MauticApiClient.Net
 {
-    public class ContactService 
+    public class ContactService
     {
         private readonly IHttpClientProvider _httpClientProvider;
 
-        public ContactService(IHttpClientProvider httpClientProvider)
-        {
+        public ContactService(IHttpClientProvider httpClientProvider){
             _httpClientProvider = httpClientProvider;
         }
 
-        public async Task<Contacts> Get()
+        public async Task<dynamic> GetById( string pId )
         {
-            var client = _httpClientProvider.GetHttpClient();
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try {
+                var varResponse = await varClient.GetAsync("contacts/" + pId);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in ContactService->GetById", varErrorHandle);
+                JObject contactsJObject = JObject.Parse(varJson);
+                dynamic contactItem = contactsJObject["contact"];
+                return contactItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
 
+        public async Task<dynamic> GetList(string pSearchParameter)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var varSearchString = "search=" + pSearchParameter;
+                varSearchString = WebUtility.HtmlEncode(varSearchString);
+                var varResponse = await varClient.GetAsync("contacts?" + varSearchString);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in ContactService->GetList", varErrorHandle);
+                var contactsJObject = JObject.Parse(varJson);
+                dynamic contactsList = contactsJObject["contacts"];
+                if (varClient != null) varClient.Dispose();
+                return contactsList;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
+
+        public async Task<dynamic> New(JObject pContact)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var content = new StringContent(pContact.ToString(), Encoding.UTF8, "application/json");
+                var varResponse = await varClient.PostAsync("contacts/new", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in ContactService->New", varErrorHandle);
+                JObject contactsJObject = JObject.Parse(varJson);
+                dynamic contactItem = contactsJObject["contact"];
+                return contactItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
+
+        public async Task<dynamic> Edit(string pId, JObject pContact)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
             try
             {
-                var response = await client.GetAsync("contacts");
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var emailsJObject = JObject.Parse(json);
-
-                var contacts = new Contacts()
-                {
-                    Total = emailsJObject.Root.SelectToken("total").Value<int>()
-                };
-
-                foreach (var emailJObject in emailsJObject.Root.SelectToken("contacts").Children())
-                    contacts.Data.Add(JsonConvert.DeserializeObject<Contact>(emailJObject.First.ToString()));
-
-                return contacts;
-            }
-            finally
-            {
-                if (client != null)
-                    client.Dispose();
+                var content = new StringContent(pContact.ToString(), Encoding.UTF8, "application/json");
+                var varResponse = await varClient.PutAsync("contacts/" + pId + "/edit", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in ContactService->Edit", varErrorHandle);
+                JObject contactsJObject = JObject.Parse(varJson);
+                dynamic contactItem = contactsJObject["contact"];
+                return contactItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
             }
         }
 
-
-        public async Task<Contact> GetById(int idContact)
+        public async Task Delete(string pId)
         {
-            var contact = new Contact();
-
-
-            //  Fournisseur de l'url de base 
-            var client = _httpClientProvider.GetHttpClient();
-
-            var url = "contacts/" + idContact;
-
-
-                HttpResponseMessage response1 = await client.GetAsync(url);
-            if (response1.IsSuccessStatusCode)
-            {
-                var product = await response1.Content.ReadAsStringAsync();
-
-                contact = JsonConvert.DeserializeObject<Contact>(product);
-
-
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var varResponse = await varClient.DeleteAsync("contacts/" + pId + "/delete");
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in ContactService->Delete", varErrorHandle);
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
             }
-
-            return contact;
-
         }
+
     }
 }

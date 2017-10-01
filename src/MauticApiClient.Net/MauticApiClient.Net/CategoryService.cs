@@ -1,9 +1,9 @@
-﻿using MauticApiClient.Net.Model;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MauticApiClient.Net.Model;
+using Newtonsoft.Json.Linq;
 
 namespace MauticApiClient.Net
 {
@@ -11,49 +11,105 @@ namespace MauticApiClient.Net
     {
         private readonly IHttpClientProvider _httpClientProvider;
 
-        public CategoryService(IHttpClientProvider httpClientProvider)
-        {
+        public CategoryService(IHttpClientProvider httpClientProvider){
             _httpClientProvider = httpClientProvider;
         }
 
-        public async Task<Categories> Get()
+        public async Task<dynamic> GetById( string pId )
         {
-            var client = _httpClientProvider.GetHttpClient();
-
-            try
-            {
-                var response = await client.GetAsync("categories");
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception(); 
-
-                var json = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<Categories>(json);
-            }
-            finally
-            {
-                if (client != null)
-                    client.Dispose();
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try {
+                var varResponse = await varClient.GetAsync("categories/" + pId);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in CategoryService->GetById", varErrorHandle);
+                JObject categoriesJObject = JObject.Parse(varJson);
+                dynamic categoryItem = categoriesJObject["category"];
+                return categoryItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
             }
         }
 
-        public async Task Add(string name, string bundle)
+        public async Task<dynamic> GetList()
         {
-            var client = _httpClientProvider.GetHttpClient();
-
-            try
-            {
-                var content = new StringContent(JsonConvert.SerializeObject(new NewCategory { Name = name, Bundle = bundle }), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("categories/new", content);
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception();
-            }
-            finally
-            {
-                if (client != null)
-                    client.Dispose();
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var varResponse = await varClient.GetAsync("categories");
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in CategoryService->GetList", varErrorHandle);
+                var categoriesJObject = JObject.Parse(varJson);
+                dynamic categoriesList = categoriesJObject["categories"];
+                if (varClient != null) varClient.Dispose();
+                return categoriesList;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
             }
         }
+
+        public async Task<dynamic> New(JObject pCategory)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var content = new StringContent(pCategory.ToString(), Encoding.UTF8, "application/json");
+                var varResponse = await varClient.PostAsync("categories/new", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in CategoryService->New", varErrorHandle);
+                JObject categoriesJObject = JObject.Parse(varJson);
+                dynamic categoryItem = categoriesJObject["category"];
+                return categoryItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
+
+        public async Task<dynamic> Edit(string pId, JObject pCategory)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try
+            {
+                var content = new StringContent(pCategory.ToString(), Encoding.UTF8, "application/json");
+                var varResponse = await varClient.PutAsync("categories/" + pId + "/edit", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in CategoryService->Edit", varErrorHandle);
+                JObject categoriesJObject = JObject.Parse(varJson);
+                dynamic categoryItem = categoriesJObject["category"];
+                return categoryItem;
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
+
+        public async Task Delete(string pId)
+        {
+            var varClient = _httpClientProvider.GetHttpClient();
+            var varErrorHandle = new Errorhandler();
+            try{
+                var varResponse = await varClient.DeleteAsync("categories/" + pId + "/delete");
+                var varJson = await varResponse.Content.ReadAsStringAsync();
+                if (varErrorHandle.TryToParse(varJson))
+                    throw new MauticApiException("Exception in CategoryService->Delete", varErrorHandle);
+            } catch {
+                throw;
+            } finally {
+                if (varClient != null) varClient.Dispose();
+            }
+        }
+
     }
 }
