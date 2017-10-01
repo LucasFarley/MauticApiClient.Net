@@ -1,7 +1,5 @@
 ﻿using MauticApiClient.Net;
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ConsoleAppExample
 {
@@ -13,13 +11,14 @@ namespace ConsoleAppExample
             var username = "mautic_userid";
             var password = "mautic_password";
             var url = "https://XXXXXX/api/";
+            //Define Mautic Connection Parameters
             var httpProvider = new HttpClientProvider(url, username, password);
             //Teste Mautic Api Services 
             try {
-                ////Perform Category Object Handle - Examples
-                //var varCategoryExample = new clsCategoryExample();
-                //varCategoryExample.funcExecute(httpProvider);
-                //Perform Contact Object Handle - Examples
+                //Perform Category Object Handle - Examples
+                var varCategoryExample = new clsCategoryExample();
+                varCategoryExample.funcExecute(httpProvider);
+                //Perform Contact Object Handle -Examples
                 var varContactExample = new clsContactExample();
                 varContactExample.funcExecute(httpProvider);
             } catch (AggregateException varExceptionList) {
