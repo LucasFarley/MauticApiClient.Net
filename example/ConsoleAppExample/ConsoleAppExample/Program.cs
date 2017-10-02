@@ -1,5 +1,6 @@
 ﻿using MauticApiClient.Net;
 using System;
+using System.Net;
 
 namespace ConsoleAppExample
 {
@@ -7,23 +8,24 @@ namespace ConsoleAppExample
     {
         static void Main(string[] args)
         {
-    
-            var username = "mautic_userid";
-            var password = "mautic_password";
-            var url = "https://XXXXXX/api/";
+            string varUsername  = "mautic_userid";
+            string varPassword  = "mautic_password";
+            string varMauticUrl = "https://XXXXXX/api/";
+            WebProxy varWebProxy = null;
+            TimeSpan varTimeOut = TimeSpan.FromSeconds(10);
             //Define Mautic Connection Parameters
-            var httpProvider = new HttpClientProvider(url, username, password);
+            var httpProvider = new HttpClientProvider(varUsername, varPassword, varMauticUrl, varWebProxy, varTimeOut);
             //Teste Mautic Api Services 
             try {
-                //Perform Category Object Handle - Examples
-                var varCategoryExample = new clsCategoryExample();
-                varCategoryExample.funcExecute(httpProvider);
+                ////Perform Category Object Handle - Examples
+                //var varCategoryExample = new clsCategoryExample();
+                //varCategoryExample.funcExecute(httpProvider);
                 //Perform Contact Object Handle -Examples
                 var varContactExample = new clsContactExample();
                 varContactExample.funcExecute(httpProvider);
             } catch (AggregateException varExceptionList) {
                 foreach(dynamic varException in varExceptionList.InnerExceptions){
-                    Console.WriteLine("Error {0}", varException.Message);
+                    funcWriteExceptions(varException);
                     if (varException.GetType() == typeof(MauticApiException)){
                         var varMauticApiException = (MauticApiException)varException;
                         foreach (var varErrorItem in varMauticApiException.GetErrors()) { 
@@ -34,6 +36,11 @@ namespace ConsoleAppExample
             }
             //Wait the next action
             Console.Read();
+        }
+        private static void funcWriteExceptions(Exception _prtException){
+            if (_prtException == null) { return; }
+            Console.WriteLine("Error {0} - {1}", _prtException.GetType().ToString(), _prtException.Message);
+            funcWriteExceptions(_prtException.InnerException);
         }
     }
 }

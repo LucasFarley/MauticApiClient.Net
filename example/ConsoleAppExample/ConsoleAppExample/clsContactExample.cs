@@ -16,7 +16,6 @@ namespace ConsoleAppExample
 
             //Get Contact List
             Console.WriteLine("----------------- Contact List -----------------");
-            var contactSearch = new JObject();
             Console.Write("Search Parameter : "); varSearchParameter = Console.ReadLine();
             if (!string.IsNullOrEmpty(varSearchParameter)){
                 var contactsList = contactService.GetList(varSearchParameter).Result;

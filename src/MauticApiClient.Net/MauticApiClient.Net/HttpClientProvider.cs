@@ -14,22 +14,33 @@ namespace MauticApiClient.Net
         private readonly string _username;
         private readonly string _password;
         private readonly IWebProxy _WebProxy;
+        private readonly TimeSpan? _TimeOut;
 
-        public HttpClientProvider(string baseUrl, string username, string password, IWebProxy pWebProxy = null){
+        public HttpClientProvider(string baseUrl, string username, string password, IWebProxy pWebProxy = null, TimeSpan? pTimeOut = null){
             _baseUrl = baseUrl;
             _username = username;
             _password = password;
             _WebProxy = pWebProxy;
+            _TimeOut = pTimeOut;
         }
 
         public HttpClient GetHttpClient(){
 
-            var handler = new HttpClientHandler{ Proxy = _WebProxy };
+            var handler = new HttpClientHandler();
+            if (_WebProxy == null){
+                handler.UseDefaultCredentials = true;
+            } else {
+                handler.Proxy = _WebProxy;
+            }
             var client = new HttpClient(handler);
 
             client.BaseAddress = new Uri(_baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            if(_TimeOut != null){
+                client.Timeout = (TimeSpan)_TimeOut;
+            }
 
             var byteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _username, _password));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
