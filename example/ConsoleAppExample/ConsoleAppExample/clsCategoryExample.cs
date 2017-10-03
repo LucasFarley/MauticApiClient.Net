@@ -14,7 +14,7 @@ namespace ConsoleAppExample
 
             //Get Category List
             Console.WriteLine("----------------- Category List -----------------");
-            var categoriesList = categoryService.GetList().Result;
+            var categoriesList = categoryService.GetList();
             foreach (var category in categoriesList)
                 Console.WriteLine("Category {0}# {1} {2}", category.id, category.title, category.bundle);
 
@@ -22,7 +22,7 @@ namespace ConsoleAppExample
             Console.WriteLine("---------------- Get Category ------------------");
             Console.Write("Category ID : "); varCategoryID = Console.ReadLine();
             if (!string.IsNullOrEmpty(varCategoryID)){
-                var categoryItem = categoryService.GetById(varCategoryID).Result;
+                var categoryItem = categoryService.GetById(varCategoryID);
                 Console.WriteLine("Category {0}# {1} {2}", categoryItem.id, categoryItem.title, categoryItem.bundle);
             }
 
@@ -34,7 +34,7 @@ namespace ConsoleAppExample
             Console.Write("Category Bundle : "); varCategoryBundle = Console.ReadLine();
             categoryEdit.Add("bundle", varCategoryBundle);
             if(!string.IsNullOrEmpty(varCategoryTitle) && !string.IsNullOrEmpty(varCategoryBundle)){
-                var categoryItem = categoryService.Edit(varCategoryID, categoryEdit).Result;
+                var categoryItem = categoryService.Edit(varCategoryID, categoryEdit);
                 Console.WriteLine("Category {0}# {1} {2}", categoryItem.id, categoryItem.title, categoryItem.bundle);
             }
 
@@ -46,7 +46,7 @@ namespace ConsoleAppExample
             Console.Write("Category Bundle : "); varCategoryBundle = Console.ReadLine();
             categoryNew.Add("bundle", varCategoryBundle);
             if (!string.IsNullOrEmpty(varCategoryTitle) && !string.IsNullOrEmpty(varCategoryBundle)){
-                var categoryItem = categoryService.New(categoryNew).Result;
+                var categoryItem = categoryService.New(categoryNew);
                 Console.WriteLine("Category {0}# {1} {2}", categoryItem.id, categoryItem.title, categoryItem.bundle);
             }
 

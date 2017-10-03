@@ -18,7 +18,7 @@ namespace ConsoleAppExample
             Console.WriteLine("----------------- Contact List -----------------");
             Console.Write("Search Parameter : "); varSearchParameter = Console.ReadLine();
             if (!string.IsNullOrEmpty(varSearchParameter)){
-                var contactsList = contactService.GetList(varSearchParameter).Result;
+                var contactsList = contactService.GetList(varSearchParameter);
                 foreach (var contact in contactsList){
                     foreach (var varField in contact.First["fields"]["all"]){
                         Console.WriteLine("Field {0} = {1}", varField.Name, varField.Value);
@@ -30,7 +30,7 @@ namespace ConsoleAppExample
             Console.WriteLine("---------------- Get Contact ------------------");
             Console.Write("Contact ID : "); varContactID = Console.ReadLine();
             if (!string.IsNullOrEmpty(varContactID)){
-                var contactItem = contactService.GetById(varContactID).Result;
+                var contactItem = contactService.GetById(varContactID);
                 foreach (var varField in contactItem["fields"]["all"]){
                     Console.WriteLine("Field {0} = {1}", varField.Name, varField.Value);
                 }
@@ -41,7 +41,7 @@ namespace ConsoleAppExample
             //Get the Contact to be Edited
             Console.Write("Contact to be edited : "); varContactID = Console.ReadLine();
             if (!string.IsNullOrEmpty(varContactID)){
-                var contactSelected = contactService.GetById(varContactID).Result;
+                var contactSelected = contactService.GetById(varContactID);
                 var varContatFields = (JObject)contactSelected["fields"]["all"];
                 if (varContatFields.Count > 0) {
                     //Edit the Contact Selected
@@ -66,7 +66,7 @@ namespace ConsoleAppExample
             contactNew.Add("email", varContactEmail);
             contactNew.Add("ipAddress", funcGetExternalIp());
             if (!string.IsNullOrEmpty(varContactFirstName) && !string.IsNullOrEmpty(varContactEmail)){
-                var contactItem = contactService.New(contactNew).Result;
+                var contactItem = contactService.New(contactNew);
                 foreach (var varField in contactItem["fields"]["all"]){
                     Console.WriteLine("Field {0} = {1}", varField.Name, varField.Value);
                 }

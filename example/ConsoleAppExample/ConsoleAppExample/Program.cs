@@ -8,13 +8,13 @@ namespace ConsoleAppExample
     {
         static void Main(string[] args)
         {
-            string varUsername  = "mautic_userid";
-            string varPassword  = "mautic_password";
-            string varMauticUrl = "https://XXXXXX/api/";
+            var varUrl = "https://m.solidit.net/api/";
+            var varUsername = "monitor_service";
+            var varPassword = "#12398&^$";
             WebProxy varWebProxy = null;
-            TimeSpan varTimeOut = TimeSpan.FromSeconds(10);
+            TimeSpan varTimeOut = TimeSpan.FromSeconds(60);
             //Define Mautic Connection Parameters
-            var httpProvider = new HttpClientProvider(varUsername, varPassword, varMauticUrl, varWebProxy, varTimeOut);
+            var httpProvider = new HttpClientProvider(varUrl, varUsername, varPassword, varWebProxy, varTimeOut);
             //Teste Mautic Api Services 
             try {
                 ////Perform Category Object Handle - Examples
