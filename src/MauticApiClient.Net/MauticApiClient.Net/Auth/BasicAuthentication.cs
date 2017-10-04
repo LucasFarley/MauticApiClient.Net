@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace MauticApiClient.Net.Auth
 {
     public class BasicAuthentication : IAuthentication
@@ -13,6 +8,8 @@ namespace MauticApiClient.Net.Auth
 
         public BasicAuthentication(string username, string password)
         {
+            _username = username;
+            _password = password;
         }
     }
 }
