@@ -7,19 +7,19 @@ using Newtonsoft.Json.Linq;
 
 namespace MauticApiClient.Net.Model
 {
-    public class Errorhandler
+    public class MessageHandler
     {
-        public Errorhandler(){
-            Data = new List<Error>();
+        public MessageHandler(){
+            Data = new List<Message>();
         }
-        public bool TryToParse(string pContent)
+        public bool RecoveryReturn(string pContent)
         {
             bool varResult = false;
             try{
                 Data.Clear();
                 JObject varErrorsJObject = JObject.Parse(pContent);
                 foreach (var varErrorItem in varErrorsJObject.Root.SelectToken("errors").Children()){
-                    Data.Add(JsonConvert.DeserializeObject<Error>(varErrorItem.ToString()));
+                    Data.Add(JsonConvert.DeserializeObject<Message>(varErrorItem.ToString()));
                 }
             } catch {
                 varResult = false;
@@ -29,11 +29,15 @@ namespace MauticApiClient.Net.Model
             }
             return varResult;
         }
-        public bool TryToParse(HttpResponseMessage pResponse)
+        public bool RecoveryReturn(HttpResponseMessage pResponse)
         {
             var varJson = pResponse.Content.ToString();
-            return TryToParse(varJson);
+            return RecoveryReturn(varJson);
         }
-        public List<Error> Data { get; set; }
+        public List<Message> Data { get; set; }
+
+        public bool HasStatus(string pStatusCode){
+            return Data.Exists(r => r.code.Equals(pStatusCode));
+        }
     }
 }

@@ -8,14 +8,14 @@ namespace MauticApiClient.Net
     [Serializable]
     public class MauticApiException : Exception {
 
-        private Errorhandler _ErrorList = new Errorhandler();
+        private MessageHandler _MessageList = new MessageHandler();
 
-        public MauticApiException(string message, Errorhandler pErrorList) : base(message) { 
-            _ErrorList = pErrorList;
+        public MauticApiException(string message, MessageHandler pErrorList) : base(message) {
+            _MessageList = pErrorList;
         }
 
-        public List<Error> GetErrors(){
-            return _ErrorList.Data;
+        public List<Message> GetMessages(){
+            return _MessageList.Data;
         }
 
     }

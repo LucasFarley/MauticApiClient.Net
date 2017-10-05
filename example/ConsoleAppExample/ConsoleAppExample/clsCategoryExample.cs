@@ -23,7 +23,11 @@ namespace ConsoleAppExample
             Console.Write("Category ID : "); varCategoryID = Console.ReadLine();
             if (!string.IsNullOrEmpty(varCategoryID)){
                 var categoryItem = categoryService.GetById(varCategoryID);
-                Console.WriteLine("Category {0}# {1} {2}", categoryItem.id, categoryItem.title, categoryItem.bundle);
+                if (categoryItem == null) {
+                    Console.WriteLine("Category {0}# {1}", varCategoryID, "Item not found");
+                } else {
+                    Console.WriteLine("Category {0}# {1} {2}", categoryItem.id, categoryItem.title, categoryItem.bundle);
+                }
             }
 
             //Edit Category

@@ -27,7 +27,7 @@ namespace ConsoleAppExample
                     funcWriteExceptions(varException);
                     if (varException.GetType() == typeof(MauticApiException)){
                         var varMauticApiException = (MauticApiException)varException;
-                        foreach (var varErrorItem in varMauticApiException.GetErrors()) { 
+                        foreach (var varErrorItem in varMauticApiException.GetMessages()) { 
                             Console.WriteLine("Error {0} : {1} : {2}", varErrorItem.code, varErrorItem.type, varErrorItem.message);
                         }
                     }

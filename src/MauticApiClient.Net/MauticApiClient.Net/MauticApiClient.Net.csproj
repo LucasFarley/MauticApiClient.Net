@@ -46,8 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MauticApiException.cs" />
-    <Compile Include="Model\Errorhandler.cs" />
-    <Compile Include="Model\Error.cs" />
+    <Compile Include="Model\MessageHandler.cs" />
+    <Compile Include="Model\Message.cs" />
     <Compile Include="Auth\BasicAuthentication.cs" />
     <Compile Include="Auth\IAuthentication.cs" />
     <Compile Include="CategoryService.cs" />
