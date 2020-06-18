@@ -15,13 +15,13 @@ namespace MauticApiClient.Net
             _httpClientProvider = httpClientProvider;
         }
 
-        public dynamic GetById( string pId )
+        public async Task<dynamic> GetByIdAsync( string pId )
         {
             var varClient = _httpClientProvider.GetHttpClient();
             var varMessageHandler = new MessageHandler();
             try {
-                var varResponse = varClient.GetAsync("categories/" + pId).Result;
-                var varJson = varResponse.Content.ReadAsStringAsync().Result;
+                var varResponse = await varClient.GetAsync("categories/" + pId);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
                 //Handle Responde Message List
                 varMessageHandler.RecoveryReturn(varJson);
                 if (varMessageHandler.HasStatus("404")) { return null; } // Record Not Found
@@ -37,13 +37,13 @@ namespace MauticApiClient.Net
             }
         }
 
-        public dynamic GetList()
+        public async Task<dynamic> GetListAsync()
         {
             var varClient = _httpClientProvider.GetHttpClient();
             var varMessageHandler = new MessageHandler();
             try{
-                var varResponse = varClient.GetAsync("categories").Result;
-                var varJson = varResponse.Content.ReadAsStringAsync().Result;
+                var varResponse = await varClient.GetAsync("categories");
+                var varJson = await varResponse.Content.ReadAsStringAsync();
                 //Handle Responde Message List
                 varMessageHandler.RecoveryReturn(varJson);
                 if (varMessageHandler.Data.Count > 0) { throw new MauticApiException("Exception in CategoryService->GetList", varMessageHandler); }
@@ -59,14 +59,14 @@ namespace MauticApiClient.Net
             }
         }
 
-        public dynamic New(JObject pCategory)
+        public async Task<dynamic> NewAsync(JObject pCategory)
         {
             var varClient = _httpClientProvider.GetHttpClient();
             var varMessageHandler = new MessageHandler();
             try{
                 var content = new StringContent(pCategory.ToString(), Encoding.UTF8, "application/json");
-                var varResponse = varClient.PostAsync("categories/new", content).Result;
-                var varJson = varResponse.Content.ReadAsStringAsync().Result;
+                var varResponse = await varClient.PostAsync("categories/new", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
                 //Handle Responde Message List
                 varMessageHandler.RecoveryReturn(varJson);
                 if (varMessageHandler.Data.Count > 0) { throw new MauticApiException("Exception in CategoryService->New", varMessageHandler); }
@@ -81,14 +81,14 @@ namespace MauticApiClient.Net
             }
         }
 
-        public dynamic Edit(string pId, JObject pCategory)
+        public async Task<dynamic> EditAsync(string pId, JObject pCategory)
         {
             var varClient = _httpClientProvider.GetHttpClient();
             var varMessageHandler = new MessageHandler();
             try{
                 var content = new StringContent(pCategory.ToString(), Encoding.UTF8, "application/json");
-                var varResponse = varClient.PutAsync("categories/" + pId + "/edit", content).Result;
-                var varJson = varResponse.Content.ReadAsStringAsync().Result;
+                var varResponse = await varClient.PutAsync("categories/" + pId + "/edit", content);
+                var varJson = await varResponse.Content.ReadAsStringAsync();
                 //Handle Responde Message List
                 varMessageHandler.RecoveryReturn(varJson);
                 if (varMessageHandler.Data.Count > 0) { throw new MauticApiException("Exception in CategoryService->Edit", varMessageHandler); }
@@ -103,13 +103,13 @@ namespace MauticApiClient.Net
             }
         }
 
-        public dynamic Delete(string pId)
+        public async Task<dynamic> DeleteAsync(string pId)
         {
             var varClient = _httpClientProvider.GetHttpClient();
             var varMessageHandler = new MessageHandler();
             try{
-                var varResponse = varClient.DeleteAsync("categories/" + pId + "/delete").Result;
-                var varJson = varResponse.Content.ReadAsStringAsync().Result;
+                var varResponse = await varClient.DeleteAsync("categories/" + pId + "/delete");
+                var varJson = await varResponse.Content.ReadAsStringAsync();
                 //Handle Responde Message List
                 varMessageHandler.RecoveryReturn(varJson);
                 if (varMessageHandler.Data.Count > 0) { throw new MauticApiException("Exception in CategoryService->Delete", varMessageHandler); }
